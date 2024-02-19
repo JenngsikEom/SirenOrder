@@ -1,49 +1,27 @@
 package sirenorder;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
-import org.json.simple.*;
-import org.json.simple.parser.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.PrintWriter;
 
-public class Chat {
-    private ServerSocket serverSocket;
-    private List<ChatHandler> clients = new ArrayList<>(); // 클라이언트들의 목록을 저장하는 리스트
+import org.json.simple.JSONObject;
 
-    // 채팅 서버 생성자
-    public Chat(int port) {
-        try {
-            serverSocket = new ServerSocket(port); // 서버 소켓 생성
-            System.out.println("채팅 서버가 시작되었습니다.");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+public class enterChatRoom {
+	
+	private static void entherChatRoom(BufferedReader stdIn, PrintWriter out) throws IOException {
+		//서버로 채팅방 입장을 요청하는 메시지 전송
+		JSONObjcet json = new JSONObject();
+		json.put("type", "enterChatRoom"); //메시지 타입 설정
+		out.println(json.toJSONString()); //서버에 메시지 전송
+		
+		//서버로부터의 응답수신
+		String response = stdIn.readLine();
+		System.out.println( ); //서버로부터 응답 출력
+		
+       
 
-    // 채팅 서버 시작 메서드
-    public void start() {
-        while (true) {
-            try {
-                Socket clientSocket = serverSocket.accept(); // 클라이언트의 연결을 대기하고 클라이언트가 연결되면 소켓을 생성
-                ChatHandler handler = new ChatHandler(clientSocket); // 클라이언트를 처리하는 핸들러 생성
-                clients.add(handler); // 클라이언트 목록에 핸들러 추가
-                handler.start(); // 핸들러 시작
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
+    
 
-    // 클라이언트를 처리하는 내부 클래스
-    private class ChatHandler extends Thread {
-        private Socket clientSocket; // 클라이언트 소켓
-        private PrintWriter out; // 출력 스트림
-        private BufferedReader in; // 입력 스트림
-
-        // 핸들러 생성자
-        public ChatHandler(Socket socket) {
-            this.clientSocket = socket;
-        }
 
         // 핸들러 실행 메서드
         public void run() {
@@ -89,9 +67,4 @@ public class Chat {
         }
     }
 
-    // 채팅 서버 메인 메서드
-    public static void main(String[] args) {
-        Chat chatServer = new Chat(9999); // 포트 번호를 인자로 전달하여 채팅 서버 생성
-        chatServer.start(); // 채팅 서버 시작
-    }
-}
+} 

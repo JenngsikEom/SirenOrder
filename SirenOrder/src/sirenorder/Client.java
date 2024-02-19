@@ -68,10 +68,25 @@ public class Client {
 		json.put("type", "login");
 		json.put("userid", promptForInput(stdIn, "아이디를 입력하세요>>"));
 		json.put("password", promptForInput(stdIn, "패스워드를 입력하세요>>"));
+		
+		
+//		//Login 클래스를 이용하여 로그인처리
+//		String loginResponse = Login.login((String) json.get("userid"), (String)json.get("password"));
+//		out.println(loginResponse); // 서버로 로그인 응답 전송
+		
+		//서버로부터의 응답처리
 		out.println(json.toString());
 		handleServerResponse(in, stdIn, out); // 서버로부터의 응답 처리
-
-		handleLoginSuccess(stdIn, out);
+		
+		//로그인 성공 여부 확인 및 처리
+		//JSONObject responseJson = new JSONObject(loginResponse);
+		//String loginStatus = (String) responseJson.get("로그인상태");
+		
+		if(json.toString().contains("성공")) {
+			handleLoginSuccess(stdIn, out); // 로그인 성공 시 처리
+		}else {
+			System.out.println("로그인에 실패했습니다. 다시 시도해주세요");// 로그인 실패 시 처리
+		}
 	}
 
 	// 회원가입 기능을 처리하는 메서드
@@ -98,6 +113,12 @@ public class Client {
 			if (responseString != null) {
 				JSONObject response = (JSONObject) parser.parse(responseString);
 				System.out.println(response.toJSONString());
+				
+				//로그인 실패 시 처리
+				if(response.containsKey("type") && response.get("type").equals("login_failed")) {
+					System.out.println("로그인에 실패했습니다. 다시 시도해주세요");
+					return;
+				}
 			} else {
 				System.out.println("서버로부터 응답을 받지 못했습니다.");
 			}
@@ -216,7 +237,8 @@ public class Client {
 	}
 
 	private static void enterChatRoom(BufferedReader stdIn, PrintWriter out) {
-		// TODO Auto-generated method stub
+		System.out.println("채팅방에 오신걸 환영합니다.");
+		System.out.println("[1:1채팅:onechat / 종료:quit]");
 
 	}
 
