@@ -7,5 +7,6 @@
 	</classpathentry>
 	<classpathentry kind="src" path="SirenOrder/src"/>
 	<classpathentry kind="lib" path="C:/Users/bitcamp1/git/SirenOrder/json-simple-1.1.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/bitcamp1/git/SirenOrder/LIB/ojdbc11.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
