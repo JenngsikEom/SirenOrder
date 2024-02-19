@@ -17,19 +17,12 @@ public class Client {
 	private static final String serverAddress = "localhost";
 	private static final int serverPort = 9999;
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws ParseException {
 		try (Socket socket = new Socket(serverAddress, serverPort);
 				PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
 				BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 				BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in))) {
 			System.out.println("사이렌오더 서버에 연결되었습니다.");
-
-			try {
-				Thread.sleep(500);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 
 			// 사용자 입력을 통해 로그인, 회원가입, 종료 중 하나를 선택할 수 있는 메뉴 반복
 			while (true) {
@@ -63,40 +56,29 @@ public class Client {
 	}
 
 	// 로그인 기능을 처리하는 메서드
-	private static void login(BufferedReader stdIn, PrintWriter out, BufferedReader in) throws IOException {
+	private static void login(BufferedReader stdIn, PrintWriter out, BufferedReader in)
+			throws IOException, ParseException {
 		JSONObject json = new JSONObject();
 		json.put("type", "login");
 		json.put("userid", promptForInput(stdIn, "아이디를 입력하세요>>"));
 		json.put("password", promptForInput(stdIn, "패스워드를 입력하세요>>"));
-		
-		
-//		//Login 클래스를 이용하여 로그인처리
-//		String loginResponse = Login.login((String) json.get("userid"), (String)json.get("password"));
-//		out.println(loginResponse); // 서버로 로그인 응답 전송
-		
-		//서버로부터의 응답처리
-		out.println(json.toString());
-		handleServerResponse(in, stdIn, out); // 서버로부터의 응답 처리
-		
-		//로그인 성공 여부 확인 및 처리
-		//JSONObject responseJson = new JSONObject(loginResponse);
-		//String loginStatus = (String) responseJson.get("로그인상태");
-		
-		if(json.toString().contains("성공")) {
-			handleLoginSuccess(stdIn, out); // 로그인 성공 시 처리
-		}else {
-			System.out.println("로그인에 실패했습니다. 다시 시도해주세요");// 로그인 실패 시 처리
-		}
+
+		out.println(json.toString()); // 서버의 로그인 요청 전송
+
+		handleServerResponse(stdIn, out, in); // 로그인 응답 처리
+
 	}
 
 	// 회원가입 기능을 처리하는 메서드
-	private static void signup(BufferedReader stdIn, PrintWriter out, BufferedReader in) throws IOException {
+	private static void signup(BufferedReader stdIn, PrintWriter out, BufferedReader in)
+			throws IOException, ParseException {
 		JSONObject json = new JSONObject();
 		json.put("type", "signup");
 		json.put("userid", promptForInput(stdIn, "사용할 아이디를 입력하세요"));
 		json.put("password", promptForInput(stdIn, "사용할 패스워드를 입력하세요"));
+
 		out.println(json.toString());
-		handleServerResponse(in, stdIn, out); // 서버로부터의 응답 처리
+		handleServerResponse(stdIn, out, in); // 서버로부터의 응답 처리
 	}
 
 	// 사용자로부터 입력을 요청하는 메서드
@@ -105,19 +87,24 @@ public class Client {
 		return stdIn.readLine();
 	}
 
-	private static void handleServerResponse(BufferedReader in, BufferedReader stdIn, PrintWriter out)
-			throws IOException {
+	private static void handleServerResponse(BufferedReader stdIn,PrintWriter out, BufferedReader in) throws IOException, ParseException {
 		JSONParser parser = new JSONParser();
 		try {
 			String responseString = in.readLine();
 			if (responseString != null) {
 				JSONObject response = (JSONObject) parser.parse(responseString);
-				System.out.println(response.toJSONString());
-				
-				//로그인 실패 시 처리
-				if(response.containsKey("type") && response.get("type").equals("login_failed")) {
-					System.out.println("로그인에 실패했습니다. 다시 시도해주세요");
-					return;
+				System.out.println("서버 응답" + response.toJSONString());
+
+				// 로그인 응답 처리
+				if (response.containsKey("로그인상태")) {
+				  String loginStatus =(String) response.get("로그인상태");
+				       if(loginStatus.equals("성공")) {
+				            handleLoginSuccess(stdIn, out, in);
+				        } else {
+				            System.out.println("로그인에 실패했습니다. 다시 시도해주세요.");
+				        }
+				        }else {
+				        	System.out.println("알 수 없는 응답 타입입니다.");
 				}
 			} else {
 				System.out.println("서버로부터 응답을 받지 못했습니다.");
@@ -125,12 +112,15 @@ public class Client {
 		} catch (ParseException e) {
 			System.out.println("서버로부터 응답을 파싱하는 중 오류가 발생했습니다: " + e.getMessage());
 		}
+		
 	}
 
-	private static void handleLoginSuccess(BufferedReader stdIn, PrintWriter out) throws IOException {
+	private static void handleLoginSuccess(BufferedReader stdIn, PrintWriter out, BufferedReader in) throws IOException {
 		boolean keepRunning = true;
 		while (keepRunning) {
+
 			displayPostLoginMenu(); // 로그인 성공 후 메뉴 표시
+
 			String userInput = stdIn.readLine(); // 사용자 입력 받기
 			switch (userInput) {
 			case "1":
@@ -174,8 +164,7 @@ public class Client {
 			CoffeeOrder.CoffeeMenu coffeeMenu = coffeeMenuList.get(i);
 			System.out.println((i + 1) + "," + coffeeMenu.getName() + " - " + coffeeMenu.getPrice() + "원");
 		}
-		
-		
+
 		try {
 			Thread.sleep(500);
 		} catch (InterruptedException e) {
@@ -189,7 +178,7 @@ public class Client {
 			// 선택된 메뉴를 주문합니다.
 			if (menuNumber >= 1 && menuNumber <= coffeeMenuList.size()) {
 				CoffeeOrder.CoffeeMenu selectedCoffee = coffeeMenuList.get(menuNumber - 1);
-				
+
 				if (menuNumber < 0 || menuNumber >= coffeeMenuList.size()) {
 					System.out.println("잘못된 메뉴 번호입니다.");
 					return;
@@ -202,25 +191,20 @@ public class Client {
 				boolean hasSyrup = "예".equals(stdIn.readLine());
 				System.out.println("테이크아웃으로 하시겠습니까?>> (예/아니오): ");
 				boolean isTakeout = "예".equals(stdIn.readLine());
-				
+
 				// 주문 정보 JSON 객체로 생성
 				JSONObject orderDetails = new JSONObject();
 				orderDetails.put("type", "order");
-				orderDetails.put("menuNumber",menuNumber+1);
+				orderDetails.put("menuNumber", menuNumber + 1);
 				CoffeeOrder.CoffeeMenu selectedCoffee1 = coffeeMenuList.get(menuNumber);
 				orderDetails.put("menuName", selectedCoffee1.getName());
 				orderDetails.put("isIced", isIced);
 				orderDetails.put("hasSyrup", hasSyrup);
 				orderDetails.put("isTakeout", isTakeout);
-				
-				
-				
+
 				out.println(orderDetails.toString()); // 서버로 주문 정보 전송
-				System.out.println(selectedCoffee1.getName() +
-						(isIced ? ",아이스":"핫") +
-						(hasSyrup ? ", 시럽 추가" : "") +
-						(isTakeout ? ", 테이크아웃" : "") +
-						"를 주문하셨습니다."); // 사용자에게 주문정보 전송
+				System.out.println(selectedCoffee1.getName() + (isIced ? ",아이스" : "핫") + (hasSyrup ? ", 시럽 추가" : "")
+						+ (isTakeout ? ", 테이크아웃" : "") + "를 주문하셨습니다."); // 사용자에게 주문정보 전송
 				// 주문 처리 등의 작업을 이어서 수행할 수 있습니다.
 			} else {
 				out.println("잘못된 메뉴 번호입니다.");
@@ -229,10 +213,8 @@ public class Client {
 			System.out.println("숫자를 입력해주세요.");
 		}
 	}
-	
 
 	private static void pointCharge(BufferedReader stdIn, PrintWriter out) {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -241,6 +223,5 @@ public class Client {
 		System.out.println("[1:1채팅:onechat / 종료:quit]");
 
 	}
-
 
 }
