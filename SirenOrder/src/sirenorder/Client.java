@@ -25,7 +25,7 @@ public class Client {
 			System.out.println("사이렌오더 서버에 연결되었습니다.");
 
 			try {
-				Thread.sleep(1000);
+				Thread.sleep(500);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -94,17 +94,18 @@ public class Client {
 			throws IOException {
 		JSONParser parser = new JSONParser();
 		try {
-			 String responseString = in.readLine();
-		        if (responseString != null) {
-		            JSONObject response = (JSONObject) parser.parse(responseString);
-		            System.out.println(response.toJSONString());
-		        } else {
-		            System.out.println("서버로부터 응답을 받지 못했습니다.");
-		        }
-		    } catch (ParseException e) {
-		        System.out.println("서버로부터 응답을 파싱하는 중 오류가 발생했습니다: " + e.getMessage());
-		    }
+			String responseString = in.readLine();
+			if (responseString != null) {
+				JSONObject response = (JSONObject) parser.parse(responseString);
+				System.out.println(response.toJSONString());
+			} else {
+				System.out.println("서버로부터 응답을 받지 못했습니다.");
+			}
+		} catch (ParseException e) {
+			System.out.println("서버로부터 응답을 파싱하는 중 오류가 발생했습니다: " + e.getMessage());
 		}
+	}
+
 	private static void handleLoginSuccess(BufferedReader stdIn, PrintWriter out) throws IOException {
 		boolean keepRunning = true;
 		while (keepRunning) {
@@ -130,10 +131,9 @@ public class Client {
 			}
 		}
 	}
-	
-	
+
 	private static void displayPostLoginMenu() {
-		System.out.println("\n로그인에 성공했습니다.");
+		System.out.println("\n로그인중입니다.");
 		System.out.println("1. 커피 주문");
 		System.out.println("2. 포인트 충전");
 		System.out.println("3. 채팅방 이동");
@@ -142,54 +142,83 @@ public class Client {
 
 	}
 
-	private static  void orderCoffee(BufferedReader stdIn, PrintWriter out) throws IOException {
+	private static void orderCoffee(BufferedReader stdIn, PrintWriter out) throws IOException {
 		CoffeeOrder coffeeOrder = new CoffeeOrder();
-		
+
 		List<CoffeeOrder.CoffeeMenu> coffeeMenuList = coffeeOrder.getCoffeeMenuFromDatabase();
-		
-		
-		
-		//가져온 커피 메뉴를 출력하거나 사용자에게 보여줍니다.
+
+		// 가져온 커피 메뉴를 출력하거나 사용자에게 보여줍니다.
 		System.out.println("주문가능한 커피 메뉴:");
 		for (int i = 0; i < coffeeMenuList.size(); i++) {
-			 CoffeeOrder.CoffeeMenu coffeeMenu = coffeeMenuList.get(i);
-			System.out.println((i+1)+","+ coffeeMenu.getName() + " - " + coffeeMenu.getPrice()+"원");
+			CoffeeOrder.CoffeeMenu coffeeMenu = coffeeMenuList.get(i);
+			System.out.println((i + 1) + "," + coffeeMenu.getName() + " - " + coffeeMenu.getPrice() + "원");
 		}
+		
+		
 		try {
-			Thread.sleep(1000);
+			Thread.sleep(500);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}//사용자로부터 주문할 메뉴를 입력 받습니다. 
+		} // 사용자로부터 주문할 메뉴를 입력 받습니다.
 		System.out.println("주문할 커피 메뉴 번호를 입력하세요. >>");
-		
-						
+
 		int menuNumber = Integer.parseInt(stdIn.readLine());
-		
-		//선택된 메뉴를 주문합니다.
-		if(menuNumber >= 1 && menuNumber <= coffeeMenuList.size()) {
-			CoffeeOrder.CoffeeMenu selectedCoffee = coffeeMenuList.get(menuNumber-1);
-			out.println(selectedCoffee.getName()+"를 주문하셨습니다.");
-			//주문 처리 등의 작업을 이어서 수행할 수 있습니다.
-		}else {
-			out.println("잘못된 메뉴 번호입니다.");
+		try {
+			// 선택된 메뉴를 주문합니다.
+			if (menuNumber >= 1 && menuNumber <= coffeeMenuList.size()) {
+				CoffeeOrder.CoffeeMenu selectedCoffee = coffeeMenuList.get(menuNumber - 1);
+				
+				if (menuNumber < 0 || menuNumber >= coffeeMenuList.size()) {
+					System.out.println("잘못된 메뉴 번호입니다.");
+					return;
+				}
+				System.out.println(" 쇼트 / 톨 / 그란데 / 벤티 >>");
+				String size = stdIn.readLine();
+				System.out.println("아이스로 하시겠습니까?>> (예/아니오): ");
+				boolean isIced = "예".equals(stdIn.readLine());
+				System.out.println("시럽을 추가하시겠습니까?>> (예/아니오): ");
+				boolean hasSyrup = "예".equals(stdIn.readLine());
+				System.out.println("테이크아웃으로 하시겠습니까?>> (예/아니오): ");
+				boolean isTakeout = "예".equals(stdIn.readLine());
+				
+				// 주문 정보 JSON 객체로 생성
+				JSONObject orderDetails = new JSONObject();
+				orderDetails.put("type", "order");
+				orderDetails.put("menuNumber",menuNumber+1);
+				CoffeeOrder.CoffeeMenu selectedCoffee1 = coffeeMenuList.get(menuNumber);
+				orderDetails.put("menuName", selectedCoffee1.getName());
+				orderDetails.put("isIced", isIced);
+				orderDetails.put("hasSyrup", hasSyrup);
+				orderDetails.put("isTakeout", isTakeout);
+				
+				
+				
+				out.println(orderDetails.toString()); // 서버로 주문 정보 전송
+				System.out.println(selectedCoffee1.getName() +
+						(isIced ? ",아이스":"핫") +
+						(hasSyrup ? ", 시럽 추가" : "") +
+						(isTakeout ? ", 테이크아웃" : "") +
+						"를 주문하셨습니다."); // 사용자에게 주문정보 전송
+				// 주문 처리 등의 작업을 이어서 수행할 수 있습니다.
+			} else {
+				out.println("잘못된 메뉴 번호입니다.");
+			}
+		} catch (NumberFormatException e) {
+			System.out.println("숫자를 입력해주세요.");
 		}
 	}
+	
+
 	private static void pointCharge(BufferedReader stdIn, PrintWriter out) {
 		// TODO Auto-generated method stub
-		
-	}
 
+	}
 
 	private static void enterChatRoom(BufferedReader stdIn, PrintWriter out) {
 		// TODO Auto-generated method stub
-		
-	}
-	
 
-	
 	}
 
-	
 
-	
+}

@@ -34,20 +34,21 @@ public class CoffeeOrder {
 			connection = DriverManager.getConnection(DB_URL, USER, PASSWORD);
 
 			// SQL 쿼리 작성
-			String query = "SELECT * FROM CoffeeMenu";
+			String query = "SELECT * FROM COFFEEMENU";
 			statement = connection.prepareStatement(query);
 
 			// 쿼리 실행 및 결과 처리
 			resultSet = statement.executeQuery();
 			while (resultSet.next()) {
-				String name = resultSet.getString("name");
+				String name = resultSet.getString("CoffeeName");
+				String size = resultSet.getString("Size");
 				int price = resultSet.getInt("price");
 				boolean isIced = resultSet.getInt("is_iced") == 1;
 				boolean hasSyrup = resultSet.getInt("syrup_option") == 1;
 				boolean isTakeout = resultSet.getInt("is_takeout") == 1;
 
 				// CoffeeMenu 객체 생성 및 리스트에 추가
-				CoffeeMenu coffeeMenu = new CoffeeMenu(name, price, isIced, hasSyrup, isTakeout);
+				CoffeeMenu coffeeMenu = new CoffeeMenu(name, size, price, isIced, hasSyrup, isTakeout);
 				coffeeMenuList.add(coffeeMenu);
 			}
 		} catch (ClassNotFoundException | SQLException e) {
@@ -62,13 +63,16 @@ public class CoffeeOrder {
 
 	public class CoffeeMenu {
 		private String name;
+		private String size;
 		private int price;
+		
 		private boolean isIced;
 		private boolean hasSyrup;
 		private boolean isTakeout;
 		
-		public CoffeeMenu(String name, int price, boolean isIced, boolean hasSyrup, boolean isTakeout) {
+		public CoffeeMenu(String name, String size, int price, boolean isIced, boolean hasSyrup, boolean isTakeout) {
 			this.name = name;
+			this.size = size;
 			this.price = price;
 			this.isIced = isIced;
 			this.hasSyrup = hasSyrup;
@@ -78,6 +82,11 @@ public class CoffeeOrder {
 		public String getName() {
 			return name;
 			
+		}
+		
+		// size 필드에 대한 getter 메서드
+		public String getSize() {
+			return size;
 		}
 		// price 필드에 대한 getter 메서드
 		public int getPrice() {
