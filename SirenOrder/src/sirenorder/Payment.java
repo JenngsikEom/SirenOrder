@@ -16,7 +16,7 @@ public class Payment {
 		return userId;
 	}
 	
-	public int savedMoney() {
+	public int savedMoney() { // 추후에 잔액 확인 기능 구현 가능
 		return money;
 	}
 	

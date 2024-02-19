@@ -40,7 +40,6 @@ public class Client_addPayment {
                 default:
                     System.out.println("잘못된 선택입니다. 기본값인 아메리카노로 주문합니다.");
                     coffeeType = "아메리카노";
-                 // 추가
                     price = 4500; //추가: 기본값인 아메리카노 가격
                     break;
             }
