@@ -73,7 +73,30 @@ public class CoffeeOrder {
 			this.isIced = isIced;
 			this.hasSyrup = hasSyrup;
 			this.isTakeout =isTakeout;
+		}
+		// name 필드에 대한 getter 메서드
+		public String getName() {
+			return name;
 			
+		}
+		// price 필드에 대한 getter 메서드
+		public int getPrice() {
+			return price;
+		}
+		
+		//isIced 필드에 대한 getter 메서드
+		public boolean isIced() {
+			return isIced;
+		}
+		
+		// hasSyrup 필드에 대한 getter 메서드
+		public boolean hasSyrup() {
+			return hasSyrup;
+		}
+		
+		//isTakeout 필드에 대한 getter 메서드
+		public boolean isTakeout() {
+			return isTakeout;
 		}
 		
 

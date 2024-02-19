@@ -144,20 +144,26 @@ public class Client {
 
 	private static  void orderCoffee(BufferedReader stdIn, PrintWriter out) throws IOException {
 		CoffeeOrder coffeeOrder = new CoffeeOrder();
+		
 		List<CoffeeOrder.CoffeeMenu> coffeeMenuList = coffeeOrder.getCoffeeMenuFromDatabase();
 		
 		
+		
 		//가져온 커피 메뉴를 출력하거나 사용자에게 보여줍니다.
-		out.println("주문할 커피 메뉴:");
+		System.out.println("주문가능한 커피 메뉴:");
 		for (int i = 0; i < coffeeMenuList.size(); i++) {
 			 CoffeeOrder.CoffeeMenu coffeeMenu = coffeeMenuList.get(i);
-			System.println((i+1)+","+ coffeeMenu.getName() + " - " + coffeeMenu.getPrice()+"원");
+			System.out.println((i+1)+","+ coffeeMenu.getName() + " - " + coffeeMenu.getPrice()+"원");
 		}
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}//사용자로부터 주문할 메뉴를 입력 받습니다. 
+		System.out.println("주문할 커피 메뉴 번호를 입력하세요. >>");
 		
-		//사용자롭터 주문할 메뉴를 입력 받습니다. 
-		//예시로 숫자로 메뉴를 선택하도록 구현했습니다.
-		out.print("주문할 커피 메뉴 번호를 입력하세요: ");
-		out.flush();
+						
 		int menuNumber = Integer.parseInt(stdIn.readLine());
 		
 		//선택된 메뉴를 주문합니다.
