@@ -6,5 +6,7 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="D:/Lecture/SirenOreder2/SirenOder/json-simple-1.1.1.jar"/>
+	<classpathentry kind="lib" path="D:/Lecture/SirenOreder2/SirenOder/LIB/ojdbc11.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

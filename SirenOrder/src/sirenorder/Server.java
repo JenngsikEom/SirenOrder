@@ -4,6 +4,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -17,14 +20,24 @@ public class Server {
             System.out.println("클라이언트가 연결되었습니다.");
 
             InputStream inputStream = socket.getInputStream();
-            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-            BufferedReader reader = new BufferedReader(inputStreamReader);
+            OutputStream outputStream = socket.getOutputStream();
+            PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(outputStream));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 
-            String orderInfo = reader.readLine();
-            System.out.println("주문이 접수되었습니다: " + orderInfo);
+            while (true) {
+                // 클라이언트로부터 주문 정보를 읽어옴
+                String orderInfo = reader.readLine();
+                if (orderInfo == null)
+                    break;
+                System.out.println(orderInfo);
 
-            // 클라이언트에게 다시 주문을 받을 수 있도록 메시지를 전송
-            System.out.println("다시 주문해주세요.");
+                // 클라이언트에게 주문 정보를 다시 전송
+                printWriter.println(orderInfo);
+                printWriter.flush();
+            }
+
+            printWriter.close();
+            reader.close();
 
             socket.close();
             serverSocket.close();
