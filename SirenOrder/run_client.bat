@@ -1,0 +1,1 @@
+java.exe -jar -Dfile.encoding=euc-kr jsonChatClient.jar

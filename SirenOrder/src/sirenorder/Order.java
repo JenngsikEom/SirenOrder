@@ -30,6 +30,6 @@ public class Order {
     }
 
     public String toString() {
-        return userId + "님의 주문: " + size + " 사이즈 " + coffeeType + (syrupAdded ? " (시럽 추가)" : "");
+        return userId + "님 주문하신 커피 나왔습니다. " + size + " 사이즈 " + coffeeType + (syrupAdded ? " (시럽 추가)" : "");
     }
 }

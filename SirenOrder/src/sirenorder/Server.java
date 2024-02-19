@@ -23,6 +23,9 @@ public class Server {
             String orderInfo = reader.readLine();
             System.out.println("주문이 접수되었습니다: " + orderInfo);
 
+            // 클라이언트에게 다시 주문을 받을 수 있도록 메시지를 전송
+            System.out.println("다시 주문해주세요.");
+
             socket.close();
             serverSocket.close();
         } catch (IOException e) {
