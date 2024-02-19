@@ -1,81 +1,107 @@
 package sirenorder;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.OutputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
 
 public class Client {
-    public static void main(String[] args) {
-        try {
-            Scanner scanner = new Scanner(System.in);
-
-            System.out.println("아이디를 입력하세요:");
-            String userId = scanner.nextLine();
-
-            System.out.println("커피 종류를 선택해주세요:");
-            System.out.println("1. 아메리카노");
-            System.out.println("2. 라떼");
-            System.out.println("3. 에스프레소");
-            int choice = scanner.nextInt();
-            String coffeeType;
-            switch (choice) {
-                case 1:
-                    coffeeType = "아메리카노";
-                    break;
-                case 2:
-                    coffeeType = "라떼";
-                    break;
-                case 3:
-                    coffeeType = "에스프레소";
-                    break;
-                default:
-                    System.out.println("잘못된 선택입니다. 기본값인 아메리카노로 주문합니다.");
-                    coffeeType = "아메리카노";
-                    break;
-            }
-
-            scanner.nextLine(); // 개행문자 처리
-
-            System.out.println("커피 사이즈를 선택해주세요:");
-            System.out.println("1. 작은(S)");
-            System.out.println("2. 중간(M)");
-            System.out.println("3. 큰(L)");
-            int sizeChoice = scanner.nextInt();
-            String size;
-            switch (sizeChoice) {
-                case 1:
-                    size = "작은(S)";
-                    break;
-                case 2:
-                    size = "중간(M)";
-                    break;
-                case 3:
-                    size = "큰(L)";
-                    break;
-                default:
-                    System.out.println("잘못된 선택입니다. 기본값인 중간(M) 사이즈로 주문합니다.");
-                    size = "중간(M)";
-                    break;
-            }
-
-            scanner.nextLine(); // 개행문자 처리
-
-            System.out.println("시럽을 추가하시겠습니까? (y/n)");
-            boolean syrupAdded = scanner.nextLine().equalsIgnoreCase("y");
-
-            Order order = new Order(coffeeType, size, syrupAdded, userId);
-
-            Socket socket = new Socket("localhost", 8080);
-            OutputStream outputStream = socket.getOutputStream();
-            PrintWriter out = new PrintWriter(outputStream, true);
-            out.println(order.toString());
-
-            scanner.close();
-            socket.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+	public static void main(String[] args) {
+		
+		String IP = "127.0.0.1";
+		int PORT = 8888;
+		String id = "";
+		Socket socket = null;
+		PrintWriter pw = null;
+		BufferedReader br = null;
+		Scanner scan = new Scanner(System.in);
+		
+		System.out.printf("기본 IP=%s, 기본 PORT=%d\n", IP, PORT);
+		System.out.print("IP, Port 설정필요하십니까?(y/yes/예, 아니면 그냥 Enter) >> ");
+		String answer = scan.nextLine();
+		if(answer.equals("y") || answer.equals("yes") || answer.equals("예")) {
+			System.out.print("접속할 IP >> ");
+			IP = scan.nextLine();
+			System.out.print("접속할 Port >> ");
+			PORT = Integer.parseInt(scan.nextLine());
+		}
+		
+		try {
+			// 서버를 주소를 찾아서 연결
+			socket = new Socket(IP, PORT);
+			pw = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
+			br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+//			br = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
+			
+			// 별도의 worker thread를 생성해서 서버로부터의 수신을 담당한다.
+			ReceiveThread rt = new ReceiveThread(br);
+			rt.start();
+			
+			// main thread는 서버에 전송을 담당한다.
+			// 1) id를 서버에 등록한다
+			
+			id = sendId(scan, pw);
+			Thread.sleep(300);
+			
+		}catch(Exception e) {
+			System.out.println(e.getMessage());
+		}finally {
+			if(socket!=null)
+				try {
+					socket.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}		
+			if(scan!=null) scan.close();
+		}
+		
+	}
+	
+	
+	
+public static String sendId(Scanner sc, PrintWriter pw) {
+	//JsonChatClient.mainState = ClientState.STATE_ID;
+	System.out.print("당신의 id 입력 >> ");
+	String id = sc.nextLine();
+	
+	// 프로토콜(약속)에 의한 요청 패킷 구성
+	//JSONObject idObj = new JSONObject();
+	//idObj.put("cmd", "ID");
+	//idObj.put("id", id);
+	// 문자열 변환
+	//String packet = idObj.toString();
+//	pw.println(packet);
+	//pw.flush();
+	
+	return id;
 }
+}
+
+class ReceiveThread extends Thread{
+	private BufferedReader br = null;
+	
+	public ReceiveThread(BufferedReader br) {
+		this.br = br;
+	}
+	@Override
+	public void run() {
+		try {			
+			while(true) {
+				String packet = br.readLine();
+				if(packet==null)
+					break;
+				
+			//	JSONObject packetObj = new JSONObject(packet);
+			//	processPacket(packetObj);
+			}
+			
+		}catch(Exception e) {
+			System.out.println(e.getMessage());
+		}
+	}
+}
+
+

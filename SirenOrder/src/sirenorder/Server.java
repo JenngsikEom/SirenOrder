@@ -1,32 +1,75 @@
 package sirenorder;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Hashtable;
+
+//import org.json.simple.JSONObject;
+
+
 
 public class Server {
-    public static void main(String[] args) {
-        try {
-            ServerSocket serverSocket = new ServerSocket(8080);
-            System.out.println("서버가 시작되었습니다. 클라이언트의 연결을 기다립니다...");
+	public static void main(String[] args) {
+		final int PORT = 8888; //포트번호
+		Hashtable<String, Socket>clientHt = new Hashtable<>(); //접속자관리 해시테이블
+		
+		try {
+			ServerSocket serverSocket = new ServerSocket(PORT);
+			String mainThreadName = Thread.currentThread().getName();
+			while(true) {
+				System.out.println("사이렌 오더 서버 시작 Client접속을 기다립니다. ");
+				Socket socket = serverSocket.accept();
+				
+			//	WorkerThread wt = new WorkerThread(socket, clientHt);
+			}
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+	}
 
-            Socket socket = serverSocket.accept();
-            System.out.println("클라이언트가 연결되었습니다.");
-
-            InputStream inputStream = socket.getInputStream();
-            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-            BufferedReader reader = new BufferedReader(inputStreamReader);
-
-            String orderInfo = reader.readLine();
-            System.out.println("주문이 접수되었습니다: " + orderInfo);
-
-            socket.close();
-            serverSocket.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 }
+
+class WokerThread extends Thread {
+	private Socket socket;
+	private Hashtable<String, Socket>ht;
+	
+	
+	public WokerThread(Socket socekt, Hashtable<String, Socket>ht) {
+		this.socket =socket;
+		this.ht =ht;
+	}
+	public void run() {
+		try {
+			InetAddress inetAddr = socket.getInetAddress();
+			System.out.printf("<서버-%s>%s로부터 접속했습니다.\n", getName(), inetAddr.getHostAddress());
+			OutputStream out = socket.getOutputStream();
+			InputStream in = socket.getInputStream();
+			PrintWriter pw = new PrintWriter(new OutputStreamWriter(out));
+			BufferedReader br = new BufferedReader(new InputStreamReader(in));
+		
+			while(true) {
+				
+				String line = br.readLine();
+				
+				if(line == null)
+					break;
+				
+			//	JSONObject packetObj = new JSONObject(line);
+				
+			//	processPacket(packetObj);
+				
+			}
+		} catch (Exception e) {
+			System.out.printf("<서버-%s>%s\n", getName(), e.getMessage());
+		}
+	}
+}
+
+
