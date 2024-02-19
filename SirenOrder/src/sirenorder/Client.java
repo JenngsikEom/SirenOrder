@@ -39,7 +39,7 @@ public class Client {
             scanner.nextLine(); // 개행문자 처리
 
             System.out.println("커피 사이즈를 선택해주세요:");
-            System.out.println("1. 작은(S)");
+            System.out.println("1. 작은d(S)");
             System.out.println("2. 중간(M)");
             System.out.println("3. 큰(L)");
             int sizeChoice = scanner.nextInt();
