@@ -6,7 +6,6 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
-
 import sirenorder.Payment;
 
 public class Client {
@@ -41,7 +40,7 @@ public class Client {
                 default:
                     System.out.println("잘못된 선택입니다. 기본값인 아메리카노로 주문합니다.");
                     coffeeType = "아메리카노";
-                 // 추가
+                    // 추가
                     price = 4500; //추가: 기본값인 아메리카노 가격
                     break;
             }
@@ -133,7 +132,7 @@ public class Client {
                         pay = "신용카드";
                         System.out.println("결제가 완료되었습니다.");
                         break;
-                    case 3:
+                    case                        3:
                         pay = "쿠폰";
                         System.out.println("결제가 완료되었습니다.");
                         break;
@@ -159,3 +158,4 @@ public class Client {
         }
     }
 }
+
