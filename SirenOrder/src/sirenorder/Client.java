@@ -7,6 +7,8 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
 
+import sirenorder.Payment;
+
 public class Client {
     public static void main(String[] args) {
         try {
@@ -21,19 +23,26 @@ public class Client {
             System.out.println("3. 에스프레소");
             int choice = scanner.nextInt();
             String coffeeType;
+            int price; // 커피 가격 
+         
             switch (choice) {
                 case 1:
                     coffeeType = "아메리카노";
+                    price = 4500; // 아메리카노 가격
                     break;
                 case 2:
                     coffeeType = "라떼";
+                    price = 5000; // 라떼 가격
                     break;
                 case 3:
                     coffeeType = "에스프레소";
+                    price = 4000; // 에스프레소 가격
                     break;
                 default:
                     System.out.println("잘못된 선택입니다. 기본값인 아메리카노로 주문합니다.");
                     coffeeType = "아메리카노";
+                 // 추가
+                    price = 4500; //추가: 기본값인 아메리카노 가격
                     break;
             }
 
@@ -104,16 +113,44 @@ public class Client {
                     break;
             }
 
+            int result = 0;
+            int payChoice = 0;
+            do {
+                String pay;
+                System.out.println("결제 수단을 선택해주세요:");
+                System.out.println("1. 스타벅스 카드");
+                System.out.println("2. 신용카드");
+                System.out.println("3. 쿠폰");
+                payChoice = scanner.nextInt();
+                switch (payChoice) {
+                    case 1:
+                        pay = "스타벅스 카드";
+                        System.out.println("결제가 완료되었습니다.");
+                        result = Payment.leftMoney(price);   // static을 사용하면 클래스 이름을 통해 언제든지 호출 가능
+                        System.out.println("잔액 : " + result); 
+                        break;
+                    case 2:
+                        pay = "신용카드";
+                        System.out.println("결제가 완료되었습니다.");
+                        break;
+                    case 3:
+                        pay = "쿠폰";
+                        System.out.println("결제가 완료되었습니다.");
+                        break;
+                    default:
+                        System.out.println("잘못된 선택입니다.");
+                        scanner.nextLine();
+                        break;
+                }
+            } while (payChoice != 1 && payChoice != 2 && payChoice != 3);
+
             Order order = new Order(coffeeType, size, syrupAdded, userId, coffeeOption, consumptionMethod);
+            Payment payment = new Payment(userId, 10000);
 
             Socket socket = new Socket("localhost", 8080);
             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
             out.println(order.toString());
-
-            // 서버로부터 다시 주문 정보를 받아옴
-            BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            String response = reader.readLine();
-            System.out.println("주문 정보: " + response);
+            out.println(payment.toString());
 
             scanner.close();
             socket.close();
