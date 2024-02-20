@@ -111,6 +111,26 @@ public class Server {
                     // 처리 결과를 클라이언트에게 전송
                     out.println(signupResult);
                     break;
+                    
+                case "order":
+                	//커피 주문 명령 처리
+                	// jsonRequest에서 주문 정보 추출
+                	String menuName = (String) jsonRequest.get("menuName");
+                    String size = (String) jsonRequest.get("size");
+                    boolean isIced = (boolean) jsonRequest.get("isIced");
+                    boolean hasSyrup = (boolean) jsonRequest.get("hasSyrup");
+                    boolean isTakeout = (boolean) jsonRequest.get("isTakeout");
+                	
+                 // 여기에 주문 정보에 대한 처리 로직 추가
+                    // 예를 들어 주문 정보를 데이터베이스에 저장하거나 주문을 처리하는 기능을 수행할 수 있습니다.
+                    
+                    // 처리 결과를 클라이언트에게 전송
+                    JSONObject orderResponse = new JSONObject();
+                    orderResponse.put("type", "order_response");
+                    orderResponse.put("message", "주문이 성공적으로 접수되었습니다.");
+                    out.println(orderResponse.toJSONString());
+                    break;
+                    
                 default:
                     // 알 수 없는 명령에 대한 처리
                     // 에러 메시지를 JSON 객체에 추가

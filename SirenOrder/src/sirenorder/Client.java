@@ -115,7 +115,7 @@ public class Client {
 		
 	}
 
-	private static void handleLoginSuccess(BufferedReader stdIn, PrintWriter out, BufferedReader in) throws IOException {
+	private static void handleLoginSuccess(BufferedReader stdIn, PrintWriter out, BufferedReader in) throws IOException, ParseException {
 		boolean keepRunning = true;
 		while (keepRunning) {
 
@@ -124,7 +124,7 @@ public class Client {
 			String userInput = stdIn.readLine(); // 사용자 입력 받기
 			switch (userInput) {
 			case "1":
-				orderCoffee(stdIn, out); // 커피 주문 처리
+				orderCoffee(stdIn, out, in); // 커피 주문 처리
 				break;
 			case "2":
 				pointCharge(stdIn, out); // 채팅방 이동 처리
@@ -153,65 +153,9 @@ public class Client {
 
 	}
 
-	private static void orderCoffee(BufferedReader stdIn, PrintWriter out) throws IOException {
-		CoffeeOrder coffeeOrder = new CoffeeOrder();
-
-		List<CoffeeOrder.CoffeeMenu> coffeeMenuList = coffeeOrder.getCoffeeMenuFromDatabase();
-
-		// 가져온 커피 메뉴를 출력하거나 사용자에게 보여줍니다.
-		System.out.println("주문가능한 커피 메뉴:");
-		for (int i = 0; i < coffeeMenuList.size(); i++) {
-			CoffeeOrder.CoffeeMenu coffeeMenu = coffeeMenuList.get(i);
-			System.out.println((i + 1) + "," + coffeeMenu.getName() + " - " + coffeeMenu.getPrice() + "원");
-		}
-
-		try {
-			Thread.sleep(500);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} // 사용자로부터 주문할 메뉴를 입력 받습니다.
-		System.out.println("주문할 커피 메뉴 번호를 입력하세요. >>");
-
-		int menuNumber = Integer.parseInt(stdIn.readLine());
-		try {
-			// 선택된 메뉴를 주문합니다.
-			if (menuNumber >= 1 && menuNumber <= coffeeMenuList.size()) {
-				CoffeeOrder.CoffeeMenu selectedCoffee = coffeeMenuList.get(menuNumber - 1);
-
-				if (menuNumber < 0 || menuNumber >= coffeeMenuList.size()) {
-					System.out.println("잘못된 메뉴 번호입니다.");
-					return;
-				}
-				System.out.println(" 쇼트 / 톨 / 그란데 / 벤티 >>");
-				String size = stdIn.readLine();
-				System.out.println("아이스로 하시겠습니까?>> (예/아니오): ");
-				boolean isIced = "예".equals(stdIn.readLine());
-				System.out.println("시럽을 추가하시겠습니까?>> (예/아니오): ");
-				boolean hasSyrup = "예".equals(stdIn.readLine());
-				System.out.println("테이크아웃으로 하시겠습니까?>> (예/아니오): ");
-				boolean isTakeout = "예".equals(stdIn.readLine());
-
-				// 주문 정보 JSON 객체로 생성
-				JSONObject orderDetails = new JSONObject();
-				orderDetails.put("type", "order");
-				orderDetails.put("menuNumber", menuNumber + 1);
-				CoffeeOrder.CoffeeMenu selectedCoffee1 = coffeeMenuList.get(menuNumber);
-				orderDetails.put("menuName", selectedCoffee1.getName());
-				orderDetails.put("isIced", isIced);
-				orderDetails.put("hasSyrup", hasSyrup);
-				orderDetails.put("isTakeout", isTakeout);
-
-				out.println(orderDetails.toString()); // 서버로 주문 정보 전송
-				System.out.println(selectedCoffee1.getName() + (isIced ? ",아이스" : "핫") + (hasSyrup ? ", 시럽 추가" : "")
-						+ (isTakeout ? ", 테이크아웃" : "") + "를 주문하셨습니다."); // 사용자에게 주문정보 전송
-				// 주문 처리 등의 작업을 이어서 수행할 수 있습니다.
-			} else {
-				out.println("잘못된 메뉴 번호입니다.");
-			}
-		} catch (NumberFormatException e) {
-			System.out.println("숫자를 입력해주세요.");
-		}
+	private static void orderCoffee(BufferedReader stdIn, PrintWriter out, BufferedReader in) throws IOException, ParseException {
+		 CoffeeOrder coffeeOrder = new CoffeeOrder(); // CoffeeOrder 객체 생성
+		    coffeeOrder.orderCoffee(stdIn, out); // 커피 주문 메서드 호출
 	}
 
 	private static void pointCharge(BufferedReader stdIn, PrintWriter out) {
@@ -225,3 +169,4 @@ public class Client {
 	}
 
 }
+
