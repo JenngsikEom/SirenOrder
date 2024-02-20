@@ -18,7 +18,7 @@ public class PointCharge {
 	private static final Logger logger = Logger.getLogger(Login.class.getName());
 	public static int point = 10000; // 추가: 스타벅스 카드 내 잔액 임의 지정
 	
-	public static Int point(int point) {
+	public Int point(int point) {
         Connection connection = null;
         PreparedStatement statement = null;
         ResultSet resultSet = null;
