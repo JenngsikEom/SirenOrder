@@ -143,11 +143,11 @@ public class CoffeeOrder {
 	}
 
 	// 커피를 주문하는 메서드
-	public void orderCoffee(Scanner scanner, PrintWriter out,BufferedReader in) throws IOException {
-
+	public static void orderCoffee(Scanner scanner, PrintWriter out,BufferedReader in) throws IOException {
+		 CoffeeOrder coffeeOrder = new CoffeeOrder(); // CoffeeOrder 인스턴스 생성
 		int menuNumber = 0;
 		CoffeeOrder.CoffeeMenu selectedCoffee = null;
-		List<CoffeeMenu> coffeeMenuList = getCoffeeMenuFromDatabase(); // 데이터베이스로부터 커피 메뉴를 가져옴
+		List<CoffeeMenu> coffeeMenuList = coffeeOrder.getCoffeeMenuFromDatabase(); // 데이터베이스로부터 커피 메뉴를 가져옴
 
 		// 커피 메뉴 출력
 		System.out.println("주문할 커피 메뉴:");

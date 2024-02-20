@@ -23,7 +23,9 @@ public class Server {
 
 	// 클라이언트의 아이디를 관리하기 위한 맵
 	private static Map<Socket, String> clientMap = new ConcurrentHashMap<>();
-
+	
+	
+	
 	public static void main(String[] args) {
 		ExecutorService executor = Executors.newCachedThreadPool(); // 클라이언트 처리를 위한 스레드 풀
 
@@ -47,7 +49,7 @@ public class Server {
 	// 클라이언트 요청을 처리하는 핸들러 클래스
 	static class ClientHandler implements Runnable {
 		private Socket clientSocket; // 클라이언트와의 연결 소켓
-		private Server server;
+		private String username;// 클라이언트의 아이디
 
 		public ClientHandler(Socket socket) {
 			this.clientSocket = socket;
@@ -83,6 +85,16 @@ public class Server {
 					logger.log(Level.SEVERE, "클라이언트 소켓 닫기 중 오류 발생", e);
 				}
 			}
+		}
+		//클라이언트가 로그인에 성공했을 때 호출되는 메서드
+		public void loginSuccess(String username) {
+			this.username = username; // 클라이언트의 아이디설정
+			clientMap.put(clientSocket,username); // 클라이언트 소켓과 아이디를 매칭하여 저장
+		}
+		
+		//클라이언트의 아이디를 반환하는 메서드
+		public String getUsername() {
+			return username;
 		}
 
 		// 클라이언트로부터 받은 명령을 처리하는 메서드
