@@ -18,8 +18,7 @@ public class Client {
 	// 서버 주소와 포트 번호 설정
     private static final String serverAddress = "localhost";
     private static final int serverPort = 9999;
-    private static int point = 10000; // 추가: 스타벅스 카드 내 잔액 임의 지정
-    private static int coffeeprice; // 추가: coffeeprice 전역 변수 지정
+    private static int coffeePrice; // 추가: coffeeprice 전역 변수 지정
 
     public static void main(String[] args) {
         try (Socket socket = new Socket(serverAddress, serverPort);
@@ -212,7 +211,7 @@ public class Client {
                 case 1:
                     pay = "스타벅스 카드";
                     System.out.println(pay+ " 결제가 완료되었습니다.");
-                    point -= price; // 커피 가격만큼 포인트 차감
+                    point -= coffeePrice; // 커피 가격만큼 포인트 차감
                     System.out.println("잔액 : " + point);
                     break;
                 case 2:
@@ -230,10 +229,29 @@ public class Client {
             }
         } while (payChoice != 1 && payChoice != 2 && payChoice != 3);
     }
-
+    
+    // 추가 : pointCharge 메서드 작성
     private static void pointCharge(BufferedReader stdIn, PrintWriter out) {
-        // TODO Auto-generated method stub
-
+        PointCharge chargeResult = new PointCharge();
+        
+        // 사용자로부터 충전할 금액을 입력 받습니다.
+     	System.out.println("충전할 금액을 입력하세요. >>");
+     	int charge = Integer.parseInt(stdIn.readLine());
+     	try {
+     		// 스타벅스 카드에 입력한 금액을 충전합니다.
+     		if(charge>=1) {
+     			point += charge;
+     			// 충전 후 금액을 JSON 객체로 생성
+     			JSONObject ㅇㄹㅇㄹㄷㄱ = new JSONObject();
+     		
+     			System.out.println("충전이 완료되었습니다.");
+     		}
+     		else {
+     			System.out.println("충전에 실패했습니다.");
+     		}
+     	} catch(NumberFormatException e){
+     		System.out.println("다시 입력해주세요.");
+     	}
     }
 
     private static void enterChatRoom(BufferedReader stdIn, PrintWriter out) {
