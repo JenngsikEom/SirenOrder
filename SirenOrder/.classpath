@@ -8,5 +8,15 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="lib" path="D:/Lecture/SirenOreder2/SirenOder/json-simple-1.1.1.jar"/>
 	<classpathentry kind="lib" path="D:/Lecture/SirenOreder2/SirenOder/LIB/ojdbc11.jar"/>
+	<classpathentry kind="lib" path="LIB/ojdbc11.jar">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="LIB/json-simple-1.1.1.jar">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

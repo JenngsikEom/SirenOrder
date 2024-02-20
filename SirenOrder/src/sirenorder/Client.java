@@ -8,8 +8,12 @@ import java.net.Socket;
 import java.util.Scanner;
 import sirenorder.Payment;
 
+
+
 public class Client {
+	
     public static void main(String[] args) {
+    	
         try {
             Scanner scanner = new Scanner(System.in);
 
