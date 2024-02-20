@@ -26,7 +26,7 @@ public class Client {
          
             switch (choice) {
                 case 1:
-                    coffeeType = "아메리카노";
+                    coffeeType = "아메리키노";
                     price = 4500; // 아메리카노 가격
                     break;
                 case 2:
