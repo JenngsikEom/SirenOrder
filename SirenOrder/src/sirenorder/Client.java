@@ -130,7 +130,7 @@ public class Client {
 				pointCharge(stdIn, out); // 채팅방 이동 처리
 				break;
 			case "3":
-				enterChatRoom(stdIn, out); // 채팅방 이동 처리
+				oneChat(stdIn, out); // 채팅방 이동 처리
 				break;
 			case "4":
 				System.out.println("서비스를 종료합니다.");
@@ -162,9 +162,9 @@ public class Client {
 
 	}
 
-	private static void enterChatRoom(BufferedReader stdIn, PrintWriter out) {
-		System.out.println("채팅방에 오신걸 환영합니다.");
-		System.out.println("[1:1채팅:onechat / 종료:quit]");
+	private static void oneChat(BufferedReader stdIn, PrintWriter out) {
+		OneChat oneChat = new OneChat();
+			oneChat.
 
 	}
 
