@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -142,7 +143,7 @@ public class CoffeeOrder {
 	}
 
 	// 커피를 주문하는 메서드
-	public void orderCoffee(BufferedReader stdIn, PrintWriter out) throws IOException {
+	public void orderCoffee(Scanner scanner, PrintWriter out,BufferedReader in) throws IOException {
 
 		int menuNumber = 0;
 		CoffeeOrder.CoffeeMenu selectedCoffee = null;
@@ -158,17 +159,22 @@ public class CoffeeOrder {
 		// 메뉴 번호 입력 및 유효성 검증
 		while (true) {
 			// 사용자로부터 주문할 메뉴를 입력 받습니다.
-			System.out.println("주문할 커피 메뉴 번호를 입력하세요. >>");
+			System.out.println("주문할 커피 메뉴 번호를 입력하세요.(종료'0'입력) >>");
 			try {
 
-				menuNumber = Integer.parseInt(stdIn.readLine());
+				menuNumber = Integer.parseInt(scanner.nextLine());
+				
+				if(menuNumber == 0) {
+					System.out.println("주문이 취소되었습니다.");
+					return; // 주문 취소
+				}
 
 				// 선택된 메뉴를 주문합니다.
 				if (menuNumber < 1 || menuNumber > coffeeMenuList.size()) {
 					System.out.println("잘못된 메뉴 번호입니다. 다시 입력해주세요.");
 				} else {
 					selectedCoffee = coffeeMenuList.get(menuNumber - 1);
-					break; // 유요한 주문일경우 반복문 종료
+					break; // 유효한 주문일경우 반복문 종료
 				}
 			} catch (NumberFormatException e) {
 				System.out.println("숫자를 입력해주세요.");
@@ -177,13 +183,13 @@ public class CoffeeOrder {
 		// 메뉴번호가 유효한 경우, 추가 주문 정보를 입력받습니다.
 
 		System.out.println("커피 사이즈 선택 (쇼트 / 톨 / 그란데 / 벤티:) >>");
-		String size = stdIn.readLine();
+		String size = scanner.nextLine();
 		System.out.println("아이스로 하시겠습니까?>> (네/아니오): ");
-		boolean isIced = "네".equals(stdIn.readLine());
+		boolean isIced = "네".equals(scanner.nextLine());
 		System.out.println("시럽을 추가하시겠습니까?>> (네/아니오): ");
-		boolean hasSyrup = "네".equals(stdIn.readLine());
+		boolean hasSyrup = "네".equals(scanner.nextLine());
 		System.out.println("테이크아웃으로 하시겠습니까?>> (네/아니오): ");
-		boolean isTakeout = "네".equals(stdIn.readLine());
+		boolean isTakeout = "네".equals(scanner.nextLine());
 
 		// 주문 정보 JSON 객체로 생성
 		JSONObject orderDetails = new JSONObject();
