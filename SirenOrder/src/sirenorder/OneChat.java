@@ -3,6 +3,7 @@ package sirenorder;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Map;
 import java.util.Scanner;
 
 import org.json.simple.JSONObject;
@@ -13,17 +14,17 @@ public class OneChat implements Runnable { // Runnable 인터페이스 구현
 	private BufferedReader stdIn; // 표준 입력 스트림
 	private PrintWriter out; // 출력 스트림
 	private String userId; // 사용자 ID 추가
+	private Map<String, PrintWriter> clientMap; // 클라이언트 맵
 	
 
 	// 생성자
-	public  OneChat(Scanner scanner, PrintWriter out, String userId) {
-		this.scanner = scanner;
-		
-		this.out = out;
-		this.userId = userId; // 사용자 ID 설정
-		
+	public OneChat(Scanner scanner, BufferedReader stdIn, PrintWriter out, String userId, Map<String, PrintWriter> clientMap) {
+	    this.scanner = scanner;
+	    this.stdIn = stdIn; // stdIn 변수 초기화
+	    this.out = out;
+	    this.userId = userId;
+	    this.clientMap = clientMap;
 	}
-	
 
 	@Override
 	public void run() {
@@ -33,30 +34,38 @@ public class OneChat implements Runnable { // Runnable 인터페이스 구현
 			System.out.println(userId + "님, 사이렌오더 채팅방에 오신걸 환영합니다.(종료:'quit'입력");
 			
 						
-			// 서버로 채팅방 입장을 요청하는 메시지 전송
-			JSONObject json = new JSONObject();
-			json.put("type", "enterChatRoom"); // 메시지 타입 설정
-			json.put("userId", userId); // 사용자 아이디 전송
-			out.println(json.toJSONString()); // 서버에 메시지 전송
+			
 
 			// 서버로부터의 응답수신
 			String response;
 			while ((response = stdIn.readLine()) != null) {
 				System.out.println(response); // 서버로부터 응답 출력
 
-				// 사용자 입력받기
+				// 사용자가 입력한 채팅 메시지 받기
 				System.out.println(userId + ": ");
-				String userInput = stdIn.readLine();
-				// sendMessage("사이렌오더 채팅방에 오신걸 환영합니다.");
+				String message = scanner.nextLine();
+				
+				
+				// 서버에서 받은 응답 출력
+	            String response = in.readLine();
+	            System.out.println(response);
 
-				if ("quit".equals(userInput)) {
-					System.out.println("채팅이 종료되었습니다.");
-					break;
-				} else {
+	            // 사용자가 'quit'을 입력하면 채팅 종료
+                if (message.equals("quit")) {
+                    System.out.println("채팅이 종료되었습니다.");
+                    break;
+				} 
+                
+             // 서버로 채팅 메시지 전송
+                JSONObject json = new JSONObject();
+                json.put("type", "chat");
+                json.put("userId", userId);
+                json.put("message", message);
+                out.println(json.toJSONString());
+                
+               
 
-					// 그 외의 입력은 서버로 전송
-					sendMessage(userInput);
-				}
+				
 			}
 
 		} catch (IOException e) {

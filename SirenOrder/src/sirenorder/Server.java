@@ -150,10 +150,10 @@ public class Server {
 
 				case "chat":
 					// 채팅 명령 처리
-					String username = (String) jsonRequest.get("username");
+					String sender = clientMap.get(clientSocket); // 현재 클라이언트의 아이디 가져오기
 					String message = (String) jsonRequest.get("message");
 					// 클라이언트의 아이디와 메시지를 함께 브로드캐스팅
-					broadcastMessage(username, message);
+					broadcastMessage(sender, message);
 					break;
 					
 					

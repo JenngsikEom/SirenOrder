@@ -144,7 +144,7 @@ public class Client {
 			pointCharge(scanner, out); // 포인트충전
 			break;
 		case "3":
-			oneChat(scanner, out, loggedInUserId); // 채팅방 이동 처리
+			oneChat(scanner, in, out, loggedInUserId); // 채팅방 이동 처리
 			break;
 		case "4":
 			System.out.println("서비스를 종료합니다.");
@@ -174,17 +174,16 @@ public class Client {
 
 	}
 
-	private static void oneChat(Scanner scanner,  PrintWriter out, String userId) {
-
-		try (Socket socket = new Socket(serverAddress, serverPort);
-				PrintWriter socketOut = new PrintWriter(socket.getOutputStream(), true);
-				BufferedReader socketIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-				BufferedReader consoleIn = new BufferedReader(new InputStreamReader(System.in))) {
+	private static void oneChat(Scanner scanner, BufferedReader in, PrintWriter out, String userId) {
+	    try (Socket socket = new Socket(serverAddress, serverPort);
+	         PrintWriter socketOut = new PrintWriter(socket.getOutputStream(), true);
+	         BufferedReader socketIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+	         BufferedReader consoleIn = new BufferedReader(new InputStreamReader(System.in))) {
 			
 			
 			
 			//채팅방으로 이동
-			OneChat oneChat = new OneChat(scanner, out, userId); 
+			OneChat oneChat = new OneChat(scanner,in, out, userId); 
 			oneChat.run(); // OneChat 객체의 run 메서드 실행
 
 		} catch (IOException e) {

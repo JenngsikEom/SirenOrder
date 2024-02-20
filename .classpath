@@ -6,14 +6,12 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="src" path="SirenOrder/src"/>
-	<classpathentry kind="lib" path="C:/Users/bitcamp1/git/SirenOrder/json-simple-1.1.1.jar"/>
-	<classpathentry kind="lib" path="C:/Users/bitcamp1/git/SirenOrder/LIB/ojdbc11.jar"/>
-	<classpathentry kind="lib" path="D:/SirenOrder/json-simple-1.1.1.jar">
+	<classpathentry kind="lib" path="C:/Users/LDH/eclipse-workspace/SirenOrder/json-simple-1.1.1.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="D:/SirenOrder/LIB/ojdbc11.jar">
+	<classpathentry kind="lib" path="C:/Users/LDH/eclipse-workspace/SirenOrder/LIB/ojdbc11.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
