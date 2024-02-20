@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.Scanner;
 import sirenorder.Payment;
 
@@ -13,6 +16,30 @@ import sirenorder.Payment;
 public class Client {
 	
     public static void main(String[] args) {
+    	Connection conn = null;
+    	try {
+    		// JDBE Driver 등록
+    		Class.forName("oracle.jdbc.OracleDriver");
+    		
+    		// 연결하기
+    		conn = DriverManager.getConnection("jdbc:oracle:thin:@192.168.0.33:1521:XE", "c##salmon", "1234");
+    		
+    	}catch(ClassNotFoundException e) {
+    		e.printStackTrace();
+    		
+    	}catch(SQLException e) {
+    		e.printStackTrace();
+    	}finally {
+    		if(conn != null) {
+    			try {
+    				// 연결 끊기
+    				conn.close();
+    				System.out.println("연결 끊기");
+    			}catch(SQLException e) {
+    				
+    			}
+    		}
+    	}
     	
         try {
             Scanner scanner = new Scanner(System.in);
