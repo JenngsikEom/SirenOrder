@@ -19,17 +19,17 @@ public class Payment1 {
             switch (payChoice) {
                 case 1:
                     pay = "스타벅스 카드";
-                    System.out.println("결제가 완료되었습니다.");
+                    System.out.println(pay+ "결제가 완료되었습니다.");
                     point -= price; // 커피 가격만큼 포인트 차감
                     System.out.println("잔액 : " + point);
                     break;
                 case 2:
                     pay = "신용카드";
-                    System.out.println("결제가 완료되었습니다.");
+                    System.out.println(pay+ "결제가 완료되었습니다.");
                     break;
                 case 3:
                     pay = "쿠폰";
-                    System.out.println("결제가 완료되었습니다.");
+                    System.out.println(pay+ "결제가 완료되었습니다.");
                     break;
                 default:
                     System.out.println("잘못된 선택입니다.");
