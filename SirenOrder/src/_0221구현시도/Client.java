@@ -10,6 +10,8 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import dbTest.Payment1;
+
 public class Client {
 	// 서버 주소와 포트 번호 설정
 			private static final String serverAddress = "localhost";
@@ -158,7 +160,10 @@ public class Client {
 			private static void orderCoffee(BufferedReader stdIn, PrintWriter out, BufferedReader in) throws IOException, ParseException {
 				 CoffeeOrder coffeeOrder = new CoffeeOrder(); // CoffeeOrder 객체 생성
 				 coffeeOrder.orderCoffee(stdIn, out); // 커피 주문 메서드 호출
+				 // 추가 : 주문 처리 후 결제를 진행합니다.
+	             Payment.payment();
 			}
+			
 			// 추가 : 커피 주문 조회 메서드
 			private static void viewOrder(BufferedReader stdIn, PrintWriter out, BufferedReader in) {
 				try {
@@ -169,11 +174,6 @@ public class Client {
 			    }
 			}
 
-			
-			// 추가 : 결제 메서드
-			private static void payment() {
-				
-			}
 
 			private static void oneChat(BufferedReader stdIn, PrintWriter out) {
 			
