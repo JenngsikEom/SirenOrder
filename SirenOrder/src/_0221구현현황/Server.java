@@ -130,6 +130,16 @@ public class Server {
                     orderResponse.put("message", "주문이 성공적으로 접수되었습니다.");
                     out.println(orderResponse.toJSONString());
                     break;
+                case "select_store":
+                	// 4. 매장 선택 명령 처리
+                	String selectedStoreName = (String)jsonRequest.get("storeName");
+                	String selectedStoreLocation = (String) jsonRequest.get("location");
+                	
+                	// 처리 결과를 클라이언트에게 전송
+                	jsonResponse.put("type", "select_store_response");
+                	jsonResponse.put("message", "매장이 성공적으로 선택되었습니다.");
+                	out.println(jsonResponse.toJSONString());
+                	break;
                     
                 default:
                     // 알 수 없는 명령에 대한 처리

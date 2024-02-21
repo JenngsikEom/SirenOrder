@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.List;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -132,6 +131,9 @@ public class Client {
 					oneChat(stdIn, out); // 채팅방 이동 처리
 					break;
 				case "4":
+					selectStore(stdIn, out, in);
+					break;
+				case "5":
 					System.out.println("서비스를 종료합니다.");
 					keepRunning = false; // 반복문 종료
 					break;
@@ -147,7 +149,8 @@ public class Client {
 			System.out.println("1. 커피 주문");
 			System.out.println("2. 포인트 충전");
 			System.out.println("3. 채팅방 이동");
-			System.out.println("4. 종료");
+			System.out.println("4. 매장 선택");
+			System.out.println("5. 종료");
 			System.out.println("메뉴를 선택하세요. >> ");
 
 		}
@@ -186,4 +189,12 @@ public class Client {
 		private static void oneChat(BufferedReader stdIn, PrintWriter out) {
 		
 		}
-}
+		
+		//SelectStroe 를 추가하는 메서드 작성
+		private static void selectStore(BufferedReader stdIn, PrintWriter out, BufferedReader in) throws IOException, ParseException{
+			SelectStore selectStore = new SelectStore();
+			selectStore.displayStoreList();
+
+			}
+		}
+
