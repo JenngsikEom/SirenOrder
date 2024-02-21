@@ -1,1 +1,12 @@
 /.metadata/
+/.recommenders/
+.gitignore
+.settings/
+*.class
+*.exe
+*.mp4
+
+# 아래는 주석 처리
+#.classpath
+#.project
+/.gitignore

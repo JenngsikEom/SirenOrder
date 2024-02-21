@@ -14,6 +14,9 @@ import sirenorder.Payment;
 
 
 public class Client {
+    private static final String DB_URL = "jdbc:oracle:thin:@localhost:1521:XE"; // 변경될 수 있는 정보는 외부 설정에서 관리하는 것이 좋습니다.
+    private static final String USER = "c##salmon"; // 데이터베이스 사용자 이름
+    private static final String PASSWORD = "1234"; // 데이터베이스 비밀번호
 	
     public static void main(String[] args) {
     	Connection conn = null;
