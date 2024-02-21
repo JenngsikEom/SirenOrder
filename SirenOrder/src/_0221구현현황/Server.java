@@ -130,7 +130,28 @@ public class Server {
                     orderResponse.put("message", "주문이 성공적으로 접수되었습니다.");
                     out.println(orderResponse.toJSONString());
                     break;
-                    
+                // 추가 : 충전 명령 처리
+                case "charge_point":
+                    String username = (String) jsonRequest.get("username");
+                    String password = (String) jsonRequest.get("password");
+                    int chargeAmount = ((Long) jsonRequest.get("charge_amount")).intValue();
+
+                    PointCharge pointCharge = new PointCharge();
+                    int currentPoint = pointCharge.getPointFromDatabase(username, password); // 현재 포인트 조회
+                    if (currentPoint != -1) {
+                        int newPoint = pointCharge.chargePoint(username, password, chargeAmount);
+                        JSONObject chargeResponse = new JSONObject();
+                        if (newPoint != -1) {
+                            chargeResponse.put("충전상태", "성공");
+                            chargeResponse.put("포인트", newPoint);
+                        } else {
+                            chargeResponse.put("충전상태", "실패");
+                        }
+                        out.println(chargeResponse.toJSONString());
+                    } else {
+                        System.out.println("포인트 조회에 실패했습니다.");
+                    }
+                    break;
                 default:
                     // 알 수 없는 명령에 대한 처리
                     // 에러 메시지를 JSON 객체에 추가

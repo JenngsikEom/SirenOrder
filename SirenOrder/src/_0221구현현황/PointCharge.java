@@ -15,20 +15,21 @@ public class PointCharge {
 		private static final String PASSWORD = "1234"; // 데이터베이스 비밀번호
 		private static final Logger logger = Logger.getLogger(Login.class.getName());
 		
-		public int chargePoint(int chargeAmount) {
-	        int currentPoint = getPointFromDatabase(); // 현재 포인트 조회
-	        if (currentPoint == -1) {
-	            return -1; // 데이터베이스 오류 발생 시
-	        }
-	        int newPoint = currentPoint + chargeAmount; // 충전 후 포인트
-	        if (updatePointInDatabase(newPoint)) {
-	            return newPoint; // 충전 성공 시 새로운 포인트 반환
-	        } else {
-	            return -1; // 데이터베이스 오류 발생 시
-	        }
-	    }
+		public int chargePoint(String username, String password, int chargeAmount) {
+		    int currentPoint = getPointFromDatabase(username, password); // 현재 포인트 조회
+		    if (currentPoint != -1) {
+		        int newPoint = currentPoint + chargeAmount; // 충전 후 포인트
+		        if (updatePointInDatabase(username, password, newPoint)) {
+		            return newPoint; // 충전 성공 시 새로운 포인트 반환
+		        } else {
+		            return -1; // 데이터베이스 오류 발생 시
+		        }
+		    } else {
+		        return -1; // 데이터베이스 오류 발생 시
+		    }
+		}
 
-		public int getPointFromDatabase() {
+		public int getPointFromDatabase(String username, String password) {
 			Connection connection = null;
 	        PreparedStatement statement = null;
 	        ResultSet resultSet = null;
@@ -56,7 +57,7 @@ public class PointCharge {
 			return point;
 		}
 		
-		private boolean updatePointInDatabase(int newPoint) {
+		private boolean updatePointInDatabase(String username, String password, int newPoint) {
 			Connection connection = null;
 	        PreparedStatement statement = null;
 	        boolean success = false;
@@ -67,9 +68,9 @@ public class PointCharge {
 	            String query = "UPDATE users SET points = ? WHERE username = ? AND password = ?";
 	            statement = connection.prepareStatement(query);
 	            // 사용자명과 비밀번호에 따라 포인트 업데이트
-	            statement.setString(1, "username");
-	            statement.setString(2, "password");
-	            statement.setInt(3, newPoint);
+	            statement.setString(1, username); // inputUsername 변수 사용
+	            statement.setString(2, password); // inputPassword 변수 사용
+	            statement.setInt(1, newPoint); // 업데이트할 포인트 값
 	            int rowsUpdated = statement.executeUpdate();
 	            success = rowsUpdated > 0;
 	        } catch (ClassNotFoundException | SQLException e) {

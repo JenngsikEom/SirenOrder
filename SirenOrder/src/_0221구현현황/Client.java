@@ -12,10 +12,14 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 public class Client {
-	// 서버 주소와 포트 번호 설정
+		// 서버 주소와 포트 번호 설정
 		private static final String serverAddress = "localhost";
 		private static final int serverPort = 9999;
 
+		// 추가 : 사용자 이름과 비밀번호를 저장하는 멤버 변수
+	    private static String inputUsername;
+	    private static String inputPassword;
+		
 		public static void main(String[] args) throws ParseException {
 			try (Socket socket = new Socket(serverAddress, serverPort);
 					PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
@@ -57,14 +61,24 @@ public class Client {
 		// 로그인 기능을 처리하는 메서드
 		private static void login(BufferedReader stdIn, PrintWriter out, BufferedReader in)
 				throws IOException, ParseException {
-			JSONObject json = new JSONObject();
-			json.put("type", "login");
-			json.put("userid", promptForInput(stdIn, "아이디를 입력하세요>>"));
-			json.put("password", promptForInput(stdIn, "패스워드를 입력하세요>>"));
+			// 추가 : 변수 설정해서 사용자 이름과 비밀번호 저장
+			inputUsername = promptForInput(stdIn, "아이디를 입력하세요>>");
+		    inputPassword = promptForInput(stdIn, "패스워드를 입력하세요>>");
+
+		    JSONObject json = new JSONObject();
+		    json.put("type", "login");
+		    json.put("userid", inputUsername); // 변수에 저장된 아이디를 사용
+		    json.put("password", inputPassword); // 변수에 저장된 패스워드를 사용
+//		    덕현님 코드
+//			JSONObject json = new JSONObject();
+//			json.put("type", "login");
+//			json.put("userid", promptForInput(stdIn, "아이디를 입력하세요>>"));
+//			json.put("password", promptForInput(stdIn, "패스워드를 입력하세요>>"));
 
 			out.println(json.toString()); // 서버의 로그인 요청 전송
 
 			handleServerResponse(stdIn, out, in); // 로그인 응답 처리
+		
 
 		}
 
@@ -126,7 +140,7 @@ public class Client {
 					orderCoffee(stdIn, out, in); // 커피 주문 처리
 					break;
 				case "2":
-					pointCharge(stdIn, out); // 채팅방 이동 처리
+					pointCharge(stdIn, out, in); // 채팅방 이동 처리
 					break;
 				case "3":
 					oneChat(stdIn, out); // 채팅방 이동 처리
@@ -144,6 +158,9 @@ public class Client {
 
 		private static void displayPostLoginMenu() {
 			System.out.println("\n로그인중입니다.");
+			// 추가 : 입력한 아이디와 비밀번호 확인
+			System.out.println("아이디 : " + inputUsername + " 비밀번호 : " + inputPassword);
+			System.out.println();
 			System.out.println("1. 커피 주문");
 			System.out.println("2. 포인트 충전");
 			System.out.println("3. 채팅방 이동");
@@ -162,25 +179,39 @@ public class Client {
 		}
 		
 		// 추가 : pointCharge 메서드 작성
-		private static void pointCharge(BufferedReader stdIn, PrintWriter out) {
-			PointCharge pointChange = new PointCharge();
-	        
-	        System.out.println("충전할 금액을 입력하세요. >>");
-	        int charge;
-	        
-			try {
-				charge = Integer.parseInt(stdIn.readLine());
-				int newPoint = pointChange.chargePoint(charge);
-		        if (newPoint != -1) {
-		            System.out.println("충전이 완료되었습니다.(잔액: " + newPoint + ")");
+		private static void pointCharge(BufferedReader stdIn, PrintWriter out, BufferedReader in) throws IOException, ParseException {
+			JSONObject json = new JSONObject();
+			
+			JSONParser parser = new JSONParser();
+			
+		    json.put("type", "charge_point");
+		    json.put("username", inputUsername);
+		    json.put("password", inputPassword);
+		    json.put("charge_amount", promptForInput(stdIn, "충전할 금액을 입력하세요. >>"));
+
+		    out.println(json.toString());
+
+		    try {
+		        String responseString = in.readLine();
+		        if (responseString != null) {
+		            JSONObject response = (JSONObject) parser.parse(responseString);
+		            if (response.containsKey("충전상태")) {
+		                String chargeStatus = (String) response.get("충전상태");
+		                if (chargeStatus.equals("성공")) {
+		                    int newPoint = ((Long) response.get("포인트")).intValue();
+		                    System.out.println("충전이 완료되었습니다. (잔액: " + newPoint + ")");
+		                } else {
+		                    System.out.println("충전에 실패했습니다.");
+		                }
+		            } else {
+		                System.out.println("알 수 없는 응답 타입입니다.");
+		            }
 		        } else {
-		            System.out.println("충전에 실패했습니다.");
+		            System.out.println("서버로부터 응답을 받지 못했습니다.");
 		        }
-			} catch (NumberFormatException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+		    } catch (IOException | ParseException e) {
+		        System.out.println("서버 응답 처리 중 오류가 발생했습니다: " + e.getMessage());
+		    }
 		}
 
 		private static void oneChat(BufferedReader stdIn, PrintWriter out) {
