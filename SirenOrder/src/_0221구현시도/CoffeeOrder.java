@@ -1,5 +1,6 @@
 package _0221구현시도;
 
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -54,6 +55,7 @@ public class CoffeeOrder {
 				boolean isIced = resultSet.getInt("ICEORHOT") == 1;
 				boolean hasSyrup = resultSet.getInt("SYRUPADDED") == 1;
 				boolean isTakeout = resultSet.getInt("STOREORTAKEOUT") == 1;
+				
 				
 
 				// CoffeeMenu 객체 생성 및 리스트에 추가
@@ -199,6 +201,36 @@ public class CoffeeOrder {
 		System.out.println((selectedCoffee.getName()) + (isIced ? ",아이스" : "핫") + (hasSyrup ? ", 시럽 추가" : "")
 				+ (isTakeout ? ", 테이크아웃" : "") + "를 주문하셨습니다."); // 사용자에게 주문정보 전송
 		// 주문 처리 등의 작업을 이어서 수행할 수 있습니다.
+		
+		// 추가 : 주문 정보를 데이터베이스에 저장
+	    saveOrderToDatabase(selectedCoffee.getName(), size, isIced, hasSyrup, isTakeout);
+	}
+	// 추가 : 주문 내역을 데이터베이스에 저장하는 메서드
+	private void saveOrderToDatabase(String menuName, String size, boolean isIced, boolean hasSyrup, boolean isTakeout) {
+	    try {
+	        // 데이터베이스 연결
+	        Connection connection = DriverManager.getConnection(DB_URL, USER, PASSWORD);
+
+	        // SQL 쿼리 작성
+	        String insertQuery = "INSERT INTO ORDERS (MENU_NAME, SIZE, IS_ICED, HAS_SYRUP, IS_TAKEOUT) VALUES (?, ?, ?, ?, ?)";
+	        PreparedStatement insertStatement = connection.prepareStatement(insertQuery);
+
+	        // 쿼리에 주문 정보 설정
+	        insertStatement.setString(1, menuName);
+	        insertStatement.setString(2, size);
+	        insertStatement.setBoolean(3, isIced);
+	        insertStatement.setBoolean(4, hasSyrup);
+	        insertStatement.setBoolean(5, isTakeout);
+
+	        // 쿼리 실행
+	        insertStatement.executeUpdate();
+
+	        // 리소스 해제
+	        insertStatement.close();
+	        connection.close();
+	    } catch (SQLException e) {
+	        logger.log(Level.SEVERE, "주문 정보를 데이터베이스에 저장하는 도중 오류 발생", e);
+	    }
 	}
 
 	private static void closeResources(ResultSet resultSet, PreparedStatement statement, Connection connection) {
