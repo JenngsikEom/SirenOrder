@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Logger;
@@ -26,24 +27,24 @@ public class SelectStore {
 	public void displayStoreList() {
 		List<StoreMenu> storeList = getStoreList();
 		
-		System.out.println("가용한 매장 목록: ");
-		for(int i = 0;i<storeList.size();i++) {
-			System.out.println((i+1) + ". " + storeList.get(i).getStoreName());
+		if(storeList.size()>0) {
+			System.out.println("가용한 매장 목록: ");
+			for(int i=0;i<storeList.size();i++) {
+				System.out.println((i+1) + ". " + storeList.get(i).getStoreName());
+			}
+			//사용자에게 매장 선택 입력 받기
+			int userChoice = getUserChoice(storeList.size());
 			
-		}
-		
-		// 사용자에게 매장 선택 입력 받기
-		int userChoice = getUserChoise(storeList.size());
-		
-		if(userChoice != -1) {
-			// 사용자가 선택한 매장 정보 출력
-			selectedStore = storeList.get(userChoice -1);
-			System.out.println("선택한 매장: " + selectedStore.getStoreName() + ", 위치: " + selectedStore.getLocation());
-			
+			if(userChoice != -1) {
+				// 사용자가 선택한 매장 정보 출력
+				selectedStore = storeList.get(userChoice-1);
+				System.out.println("선택한 매장: " + selectedStore.getStoreName() + ", 위치: " + selectedStore.getLocation());
+			}else {
+				System.out.println("잘못된 선택입니다.");
+			}
 		}else {
-			System.out.println("잘못된 선택입니다.");
+			System.out.println("가용한 매장이 없습니다.");
 		}
-		
 	}
 	
 	
@@ -60,7 +61,7 @@ public class SelectStore {
 			connection = DriverManager.getConnection(DB_URL, USER, PASSWORD);
 			
 			// SQL 쿼리 수정 필요
-			String query = "SELECT * FROM STOREMENU";
+			String query = "SELECT STORENAME, LOCATION FROM STOREMENU";
 			statement = connection.prepareStatement(query);
 			resultSet = statement.executeQuery();
 			
@@ -98,16 +99,20 @@ public class SelectStore {
 			
 		}
 	}
-	private int getUserChoise(int maxChoice) {
+	private int getUserChoice(int maxChoice) {
 		System.out.print("원하는 매장을 선택하세요 (1-" + maxChoice + "): ");
 		Scanner scanner = new Scanner(System.in);
 		
-		if(scanner.hasNextInt()) {
+		try {
 			int choice = scanner.nextInt();
 			if(choice >= 1 && choice <= maxChoice) {
 				return choice;
 			}
+		}catch(InputMismatchException e) {
+			// 정수가 아닌 입력을 처리
+			System.out.println("숫자를 입력하세요.");
 		}
+		
 		
 		return -1; // 잘못된 선택이나 입력이면 -1반환
 	}
