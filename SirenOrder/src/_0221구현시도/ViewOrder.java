@@ -43,8 +43,7 @@ public class ViewOrder {
                 boolean isIced = resultSet.getInt("ISICED") == 1;
                 boolean hasSyrup = resultSet.getInt("HASSYRUP") == 1;
                 boolean isTakeout = resultSet.getInt("ISTAKEOUT") == 1;
-                int americano = 0;
-
+                
                 // 주문 내역 출력 형식에 맞게 수정
                 System.out.println("---------------------------");
                 System.out.println("메뉴 이름: " + menuName);
@@ -54,7 +53,9 @@ public class ViewOrder {
                 System.out.println("시럽 추가: " + (hasSyrup ? "예" : "아니오"));
                 System.out.println("테이크아웃: " + (isTakeout ? "예" : "아니오"));
                 System.out.println("---------------------------");
-                System.out.println("현재 주문 현황");
+                
+                CountCoffee countCoffee = new CountCoffee();
+                countCoffee.countTotal(menuName);
                 
             }
         } catch (ClassNotFoundException | SQLException e) {
@@ -64,7 +65,6 @@ public class ViewOrder {
             closeResources(resultSet, statement, connection);
         }
     }
-    
     // 리소스 해제 메서드
     private static void closeResources(ResultSet resultSet, PreparedStatement statement, Connection connection) {
         try {
