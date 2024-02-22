@@ -127,7 +127,7 @@ public class Client {
 						orderCoffee(stdIn, out, in); // 커피 주문 및 결제 처리
 						break;
 					case "2":
-						viewOrder(stdIn, out, in); // 커피 주문내역 조회 처리
+						viewOrder(stdIn, out, in); // 커피 주문 내역 조회 처리
 						break;
 					case "3":
 						oneChat(stdIn, out); // 채팅방 이동 처리

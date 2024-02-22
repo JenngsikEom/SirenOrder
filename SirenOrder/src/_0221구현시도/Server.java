@@ -130,6 +130,8 @@ public class Server {
                     orderResponse.put("message", "주문이 성공적으로 접수되었습니다.");
                     out.println(orderResponse.toJSONString());
                     break;
+                    
+                case "view_order":
                 	
                 case "select_store":
                 	// 4. 매장 선택 명령 처리
