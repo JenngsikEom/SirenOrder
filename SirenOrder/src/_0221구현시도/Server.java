@@ -133,6 +133,7 @@ public class Server {
                     
                 case "vieworder":
                 	
+                	
                 case "select_store":
                 	// 4. 매장 선택 명령 처리
                 	String selectedStoreName = (String)jsonRequest.get("storeName");

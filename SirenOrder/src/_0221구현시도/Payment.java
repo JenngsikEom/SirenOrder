@@ -11,10 +11,11 @@ public class Payment {
         int payChoice = 0;
         do {
             String pay;
-            System.out.println("결제 수단을 선택해주세요:");
+            System.out.println("결제 수단 :");
             System.out.println("1. 스타벅스 카드");
             System.out.println("2. 신용카드");
             System.out.println("3. 쿠폰");
+            System.out.println("메뉴를 선택하세요. >> ");
             payChoice = scanner.nextInt();
             switch (payChoice) {
                 case 1:

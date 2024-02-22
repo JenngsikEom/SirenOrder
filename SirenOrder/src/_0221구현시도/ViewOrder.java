@@ -29,17 +29,33 @@ public class ViewOrder {
             connection = DriverManager.getConnection(DB_URL, USER, PASSWORD);
 
             // SQL 쿼리 작성
-            String query = "SELECT * FROM ORDERS";
+            String query = "SELECT * FROM ORDERLIST";
             statement = connection.prepareStatement(query);
 
             // 쿼리 실행 및 결과 처리
             resultSet = statement.executeQuery();
 
             // 주문 내역 출력
-            System.out.println("주문 내역:");
             while (resultSet.next()) {
-                String orderDetails = resultSet.getString("ORDER_DETAILS");
-                System.out.println(orderDetails);
+                String menuName = resultSet.getString("COFFEENAME");
+                String size = resultSet.getString("COFFEESIZE");
+                int price = resultSet.getInt("PRICE");
+                boolean isIced = resultSet.getInt("ISICED") == 1;
+                boolean hasSyrup = resultSet.getInt("HASSYRUP") == 1;
+                boolean isTakeout = resultSet.getInt("ISTAKEOUT") == 1;
+                int americano = 0;
+
+                // 주문 내역 출력 형식에 맞게 수정
+                System.out.println("---------------------------");
+                System.out.println("메뉴 이름: " + menuName);
+                System.out.println("크기: " + size);
+                System.out.println("가격: " + price + "원");
+                System.out.println("아이스: " + (isIced ? "예" : "아니오"));
+                System.out.println("시럽 추가: " + (hasSyrup ? "예" : "아니오"));
+                System.out.println("테이크아웃: " + (isTakeout ? "예" : "아니오"));
+                System.out.println("---------------------------");
+                System.out.println("현재 주문 현황");
+                
             }
         } catch (ClassNotFoundException | SQLException e) {
             logger.log(Level.SEVERE, "주문 조회 중 오류 발생", e);
@@ -48,7 +64,7 @@ public class ViewOrder {
             closeResources(resultSet, statement, connection);
         }
     }
-
+    
     // 리소스 해제 메서드
     private static void closeResources(ResultSet resultSet, PreparedStatement statement, Connection connection) {
         try {

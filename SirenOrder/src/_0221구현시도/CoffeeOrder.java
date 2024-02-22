@@ -203,24 +203,25 @@ public class CoffeeOrder {
 		// 주문 처리 등의 작업을 이어서 수행할 수 있습니다.
 		
 		// 추가 : 주문 정보를 데이터베이스에 저장
-	    saveOrderToDatabase(selectedCoffee.getName(), size, isIced, hasSyrup, isTakeout);
+	    saveOrderlistToDatabase(selectedCoffee.getName(), size, selectedCoffee.getPrice(), isIced, hasSyrup, isTakeout);
 	}
 	// 추가 : 주문 내역을 데이터베이스에 저장하는 메서드
-	private void saveOrderToDatabase(String menuName, String size, boolean isIced, boolean hasSyrup, boolean isTakeout) {
+	private void saveOrderlistToDatabase(String menuName, String size, int price, boolean isIced, boolean hasSyrup, boolean isTakeout) {
 	    try {
 	        // 데이터베이스 연결
 	        Connection connection = DriverManager.getConnection(DB_URL, USER, PASSWORD);
 
 	        // SQL 쿼리 작성
-	        String insertQuery = "INSERT INTO ORDERS (MENU_NAME, SIZE, IS_ICED, HAS_SYRUP, IS_TAKEOUT) VALUES (?, ?, ?, ?, ?)";
+	        String insertQuery = "INSERT INTO ORDERLIST (COFFEENAME, COFFEESIZE, PRICE, ISICED, HASSYRUP, ISTAKEOUT) VALUES (?, ?, ?, ?, ?, ?)";
 	        PreparedStatement insertStatement = connection.prepareStatement(insertQuery);
 
 	        // 쿼리에 주문 정보 설정
 	        insertStatement.setString(1, menuName);
 	        insertStatement.setString(2, size);
-	        insertStatement.setBoolean(3, isIced);
-	        insertStatement.setBoolean(4, hasSyrup);
-	        insertStatement.setBoolean(5, isTakeout);
+	        insertStatement.setInt(3, price);
+	        insertStatement.setInt(4, isIced ? 1 : 0);
+	        insertStatement.setInt(5, hasSyrup ? 1 : 0);
+	        insertStatement.setInt(6, isTakeout ? 1 : 0);
 
 	        // 쿼리 실행
 	        insertStatement.executeUpdate();

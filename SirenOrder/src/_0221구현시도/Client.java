@@ -127,7 +127,7 @@ public class Client {
 						orderCoffee(stdIn, out, in); // 커피 주문 및 결제 처리
 						break;
 					case "2":
-						viewOrder(stdIn, out, in); // 커피 주문 조회 처리
+						viewOrder(stdIn, out, in); // 커피 주문내역 조회 처리
 						break;
 					case "3":
 						oneChat(stdIn, out); // 채팅방 이동 처리
@@ -149,7 +149,7 @@ public class Client {
 			private static void displayPostLoginMenu() {
 				System.out.println("\n로그인중입니다.");
 				System.out.println("1. 커피 주문");
-				System.out.println("2. 포인트 충전");
+				System.out.println("2. 커피 주문 내역 조회");
 				System.out.println("3. 채팅방 이동");
 				System.out.println("4. 매장 선택");
 				System.out.println("5. 종료");
